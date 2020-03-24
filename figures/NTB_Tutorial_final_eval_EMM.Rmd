@@ -1,0 +1,460 @@
+---
+title: "Nichetoolbox"
+author: "Luis Osorio-Olvera"
+header-includes:
+- \usepackage{bbm}
+- \usepackage{amsmath}
+- \usepackage{soul}
+- \usepackage{ulem}
+output:
+  pdf_document:
+    fig_caption: yes        
+    toc: yes
+    includes:
+      in_header: float_adjustment.tex
+  html_document:
+    number_sections: no
+    toc: yes
+  theme: cosmo
+  word_document:
+    toc: yes
+Extension: startnum
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## NicheToolBox
+
+In this tutorial I show how the application works. The application was developed for [GSOC 2016](https://summerofcode.withgoogle.com/)
+
+## Installation 
+
+Go to the github repo of the project [nichetoolbox repo](https://github.com/luismurao/nichetoolbox). 
+
+![](images_tutorial/01_github.png)
+
+Then copy and run the installation instructions in R:
+
+```{r eval=FALSE}
+if (!require('devtools')) install.packages('devtools')
+devtools::install_github('luismurao/nichetoolbox')
+```
+
+## Launching the app
++
+```{r eval=FALSE}
+library(nichetoolbox)
+run_nichetoolbox()
+```
+
+### First look
+
+![](images_tutorial/02_tutorial.png)
+
+
+## The AppSettings section
+
+In this section you need to specify the folder that contains the niche layers that you will use for the modeling process, as well as the folder where you will save your workflow.
+
+### Loading niche layers
+
+On the left panel go to **Niche layers** section  and select the folder where your niche raster layers are. Remeber that they need to have the same spatial extent and resolution (`raster` formats accepted: .asc, .bil, .sdat, .rst, .nc, .tif, .envi, .img).
+
+![](images_tutorial/03_tutorial.png)
+![](images_tutorial/04_tutorial.png)
+
+Press the **Load niche layers** button and wait. In a few seconds appears a plot showing one of the layers contained in the folder 
+
+![](images_tutorial/05_tutorial.png)
+
+### Workflow
+
+To get track of your work in `NicheToolBoox`, you need to specify the folder where you want to save your analysis, data, maps etc. Go to **Workflow** section and select the folder. 
+
+![](images_tutorial/07_tutorial.png)
+
+
+## The Data section
+
+Now, we are ready to work with `NicheToolBoox`. First, we need some georeferenced records of the species we want to model. `NicheToolBoox` can work with two source of longitude/ latitude data: a) GBIF records, which you can search, download and clean GBIF records, b) you can upload and clean your own occurrence data from a local file. 
+
+### Seaching GBIF records 
+
+Go to Data -> GBIF data. Enter species **genus**, **species name** where corresponds and optionally specify the number of records that you want to search (**occ search limit**). Press **Search GBIF** button and wait. If the species is in the GBIF portal a data table will be displayed, if the species is not in GBIF, it will display the following menssage: No ocurrences found
+
+![](images_tutorial/08_tutorial.png)
+
+In the example we searched for the species $Ambystoma\,\,tigrinum$ which generated 480 records. 
+
+### GBIF data cleaning 
+
+You can remove duplicate records using a separation distance in decimimal degrees (default is 0). For $Ambystoma\,\,tigrinum$ I had **480 records** before cleaning, and after clicking **Clean duplicates** with a $\delta=0$ distance it remained **154**, so there were **`r 480-154`** duplicate records!!!
+
+![](images_tutorial/09_tutorial.png)
+
+#### Clean duplicates by group
+
+Suppose that your species has a huge geographic range and you want to work only with the records that match certain criteria, for example records that lie within Canada. You can curate duplicate records using a grouping variable; in this example the grouping variable must be country. Go to **Clean duplicates by group** section and select the grouping variable in this case **country**, then select the country (Canada) and click **Clean duplicates by group**. 
+
+![](images_tutorial/10_tutorial.png)
+
+From **154** records only **2** are in Canada. 
+
+![](images_tutorial/12_tutorial.png)
+
+#### GBIF visualizations
+
+The GBIF dataset has some fields that can be used to get some exciting visualizations, particulary fields related to observation date (year, month, day) and country. In Data -> GBIF data ->  GBIF visualizations tab you can play with interactive plots, create animated visualizations and display a calendar of the reported records by year.
+
+![](images_tutorial/13_tutorial.png)
+![](images_tutorial/ambystoma_tigrinum_animatedMapNTB.gif)
+
+
+### User data 
+
+You can use and clean your own latitude and longitude data for the modeling process. Go to Data -> User data and upload your data. The data cleaning process is exactly the same as the GBIF data.
+
+![](images_tutorial/14_tutorial.png)
+
+## Geographic explorations using Dynamic Maps
+
+We have seen how to curate data using threshold distances and grouping varibales in `NicheToolBoox`. Now let's see how to use `leaflet` maps: 1) to display longitude/latitude data, 2) to clean data and 3) to define our study area (**M data** referring to the **M concept**, which in the **niche modeling world** is the accesible area where the species has been able to reach even if has not established), 4) Clean data using the M polygon. The above can be done for either the GBIF dataset or the User dataset.
+
+### Display longitude and latitude data
+
+Go to Data -> Dynamic Map and on the right panel **Select a dataset** that you want to work with, in this case I will show the work with GBIF data. 
+
+![](images_tutorial/15_tutorial.png)
+
+### Data curation using dynamic map
+
+On the right side panel there is an option where you can specify the data point id to clean it from the dataset. Clic on pop-up to see the point id, select it in the select input form from the right panel and press **Clean data points** button to clean.
+
+![](images_tutorial/16_tutorial.png)
+
+### Define an 'M' map
+
+You can use `NicheToolBoox` to define your study area. Go to  Data -> Dynamic Map and in the right-side panel turn-on the button **Define and work with polygon M**, when activated you can either draw a polygon using the drawing tools (topright corner) from `NicheToolBoox` or select a local shapefile. If you prefer to define the M polygon using `NicheToolBoox` press the polygon tool and draw it:
+
+
+![](images_tutorial/17_tutorial.png)
+
+Once defined, the polygon can be saved. In the right panel there is a form where you can give a name for your polygon.
+
+
+![](images_tutorial/18_tutorial.png)
+
+#### Data curation using the M polygon
+
+We can filter the data points that lie inside the polygon. In the right panel just press the button **Points in polygon**
+
+![](images_tutorial/19_tutorial.png)
+
+## Saving the workflow
+
+Once specified the workflow directory (AppSettings "go to the first section of the tutorial"") which is the directory where all the information generated in the app is stored, we just need to press the **Save state** button in order to save everything!! (in this stage only the geographic data related work).
+
+![](images_tutorial/20_tutorial.png)
+
+### The workflow report
+
+One of the files generated when you preess **Save state** is the **data_report.html** which is an html file with a summary of the geographic data-related information that you have done with `NicheToolBoox`.
+
+![](images_tutorial/21_tutorial.png)
+![](images_tutorial/22_tutorial.png)
+![](images_tutorial/23_tutorial.png)
+
+
+# Niche space (steps to make a cluster analysis)
+
+To work in **Niche space** we need to have loaded our **niche raster layers** (AppSettings "go to the first section of the tutorial"") and have a **longitude/latitude dataset** (GBIF data or User data).
+
+## 1. Extracting niche values from raster layers
+
+Go to Niche space -> Niche data extraction and select a longitude and latitude dataset. In the example I selected the **GBIF dataset**. If the dataset is not empty and we have loaded the **raster layers** the app will not show any message:
+
+![](images_tutorial/24_tutorial.png)
+
+On the contrary, if we have not loaded either the **raster layers** or the **longitude/latitude data** a messages indicating what to do will be displayed.
+
+![](images_tutorial/25_tutorial.png)
+
+
+When the dataset and the layers are in the App memory we can proceed to the next step. Here you just need to press the **Run** button and then a data table with the niche values of our longitude and latitude data will be displayed. 
+
+![](images_tutorial/26_tutorial.png)
+
+## 2. Niche explorations
+
+We can explore our niche data using some exciting 3-Dimensional plots. Go to Niche space -> Known niche and play with **$x$**, **$y$** and **$z$** variables of the ellipsoid plot.
+
+![](images_tutorial/27_tutorial.png)
+
+### 2.1 Niche trends
+
+You can fit a (linear, quadratic, additive, smooth) model to see if your niche data have a trend. 
+
+![](images_tutorial/28_tutorial.png)
+
+## 3. Niche clustering
+
+When studying species niches and distributions, one of the biggest questions that comes to my mind is whether or not the species are adapting to different niche conditions. One way to explore this question is using clustering algorithms (a statistical tool which aims to observe if a multivariate data have a cluster structure in such a way that the data belonging to the same cluster are highly similar between them and different with respect to other groups). If the clusters are different, we can think that populations of the same species are responding in different ways to the same set of niche variables (they are adapting to local conditions). This is just an exploratory tool.
+
+Go to Niche clustering -> K-means section and select at least 3 niche variables to make the cluster analysis. In my case, as I selected the bios of the [WorldClim](http://www.worldclim.org/) database as my niche layers, I used 19 niche variables, but if you want to work with few variables just delate some of them (**Select at least 3 niche variables** section). 
+
+![](images_tutorial/29_tutorial.png)
+
+Here it is necessary to indicate a number of clusters, the default value is 3 (in the future the app will have algorithms to help you to make this decision). Press the **Go!!!** button and you will see a 3 dimensional plot with ellipsoids representing the number of clusters you suggested. Bellow this plot you will see a `leaflet` map with the geographic projection of the points that fall inside each ellipsoid (colors help to identify to which cluster each data point belongs).
+
+![](images_tutorial/30_tutorial.png)
+
+
+Let's play with the number of cluster (now 4) and see how the results change...
+
+![](images_tutorial/32_tutorial.png)
+
+## 4. Niche correlations
+
+One popular method to select the niche varibles for modeling species niches and distributions is to study correlations among niche variables and filter those varibles that are highly correlated. In `Nichetoolbox` you can filter the variables that summarize the environmental information of your presences data according to a correlation threshold; this algorithm suggest which variables to use for the modeling part. 
+
+![](images_tutorial/33_tutorial.png)
+
+Also, you can explore the correlation matrix and download it in .csv format
+
+![](images_tutorial/34_tutorial.png)
+
+Another thing that the user can do is to plot a correleogram.
+
+![](images_tutorial/35_tutorial.png)
+
+
+
+## 6. Ecological niche modeling
+
+Ecological Niche Modeling (ENM), is a growing field of ecology and biogeography which aims to reconstruct the multidimensional ecological niche of species and from here to approximate its geographical distribution. ENM uses a set of mathematical and statistical tools to study the relationship between some environmental variables and species occurrences to estimate species niches and predict potential areas where the species can survive. These models have proved useful in ecology and conservation biology because they have been used to identify geographic localities that can be used to relocate endangered species, to study the impacts of climate change in biodiversity, to find biodiversity hotspots, vulnerability to invasive species and pathogens, among other applications (Peterson & Vieglais 2001; Peterson et al 2011). 
+
+In `Nichetoolbox` you can model ecological niches by using one of following modeling algorithms:
+
+1) Minimum volume ellipsoid
+2) Bioclim
+3) MaxEnt
+
+![](images_tutorial/36_tutorial.png)
+
+
+### 6.1 Minimum volume ellipsoid model
+
+Ellipsoid models use the multinormal probability density function (PDF; equation 1) to compute the niche suitability index; the PDF is rescaled in order to have a suitability index defined in the inerval $[0,1]$. 
+
+
+$$f\,(x_{1},x_{2},x_{3},..,x_{k})=\frac{1}{\left(2\pi\right)^{k}\mid\mathbf{\sum}\mid}\exp\left(-\frac{1}{2}\left(\mathbf{x-\mathbf{\mathbf{\mu}}}\right)^{\mathbf{T}}\mathbf{\sum}^{-1}\left(\mathbf{x-\mathbf{\mathbf{\mu}}}\right)\right)\,\,(1)$$
+
+$$f\,(x_{1},x_{2},x_{3},..,x_{k})=1\,\exp\left(-\frac{1}{2}\left(\mathbf{x-\mathbf{\mathbf{\mu}}}\right)^{\mathbf{T}}\mathbf{\sum}^{-1}\left(\mathbf{x-\mathbf{\mathbf{\mu}}}\right)\right)$$
+
+where $\mathbf{x}$ is the vector of enviromental variables such that each $x_i$ represents an observation of the environmental variable $i$. $\Sigma$ is the covariace matrix of the occ data. $\mu$ is the vector of means (centroids).
+
+The $({\mathbf x}-{\boldsymbol\mu})^\mathrm{T}{\boldsymbol\Sigma}^{-1}({\mathbf x}-{\boldsymbol\mu})$ is the square of the Mahalanobis distance.
+
+
+In `Nichetoolbox`, to make an ellipsoid model you just neeed the environmental information of your ocurrence points and select which layers you want to model the niche.
+
+The model can be trained either with all ocurrence data or with the ocurrence points that lie inside your polygon of M.
+
+
+![](images_tutorial/37_tutorial.png)
+
+Similary, you can project the model to the geography by using either the full extent of rasters or the extent of the 'M' polygon.
+
+##### Using full extent
+
+![](images_tutorial/38_tutorial.png)
+
+
+Select the niche variables and run your model.
+
+![](images_tutorial/39_tutorial.png)
+
+##### Using the extent of the 'M' polygon
+
+![](images_tutorial/40_tutorial.png)
+
+Download ellipsoid metadata
+
+![](images_tutorial/41_tutorial.png)
+
+Download ellipsoid raster model
+
+![](images_tutorial/42_tutorial.png)
+
+Download distance to the centroid table 
+
+![](images_tutorial/43_tutorial.png)
+
+### 6.2 Bioclim model
+
+The way that bioclim model is implemented in `Nichetoolbox` is the same as the ellipsoid model: 
+
+- The model can be trained either with all ocurrence data or with ocurrence points that lie inside your 'M' polygon.
+
+![](images_tutorial/44_tutorial.png)
+
+- Similary, you can project the model to the geography using either the full extent of rasters or the extent of the 'M' polygon.
+
+![](images_tutorial/45_tutorial.png)
+
+
+### 6.3 MaxEnt model 
+
+You can run `MaxEnt` within `Nichetoolbox`. `Nichetoolbox` call the Maxent function from `dismo` package. In order to use `MaxEnt` within `Nichetoolbox` you need to install `rJava` and paste the .jar file of `maxent` in the java folder of dismo.
+To test if `maxent` is aviable run the following comand:
+
+```{r} 
+
+jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
+# Ask if necessary files are in java folder of dismo 
+file.exists(jar) 
+# test if rJava is installed
+"rJava" %in% installed.packages()
+```
+
+If everithing is fine, you can make Maxent models within `Nichetoolbox` with your own data or the data that you have downloaded from GBIF and by chossing between full raster extent or the 'M' extent. 
+
+Most of `MaxEnt` features and setting are implemented in the app
+
+
+##### Main features
+
+![](images_tutorial/46_tutorial.png)
+
+
+##### Basic settings
+
+![](images_tutorial/47_tutorial.png)
+
+##### Advanced settings
+
+![](images_tutorial/48_tutorial.png)
+
+##### Experimental settings
+
+![](images_tutorial/49_tutorial.png)
+
+
+#### Runing maxent
+
+Once you have configured your Maxent settings press the run button. A window with the basic statitics of `maxent` will be displayed
+
+![](images_tutorial/50_tutorial.png)
+
+![](images_tutorial/51_tutorial.png)
+
+
+#### Download Maxent results 
+
+To download `maxent` results click on Download complete results link
+
+![](images_tutorial/52_tutorial.png)
+
+#### Download Maxent raster model
+
+![](images_tutorial/53_tutorial.png)
+
+![](images_tutorial/54_tutorial.png)
+
+### ENM projection in geographic space
+
+Once you have modeled your species' niche using one or all modeling algorithms, you can explore them in geographic space by using the model visualizer. The visualizer is interactive (you can zoom in/out a map) and uses the `leaflet` library.
+
+![](images_tutorial/55_tutorial.png)
+
+## 7. Species distribution model performance
+
+The last part of the project deals with species distribution model evaluation and performance. `Nichetoolbox` has two  ways to evaluate models:
+
+1) Partial Roc: uses the function implemented on `ENMGadgets` package that does Partial Roc (Peterson et al. 2008).
+
+2) Confusion matrix metrics: You can compute prevalence, specificity, sensitivity, TSS, Kappa, correct classification rate, misclassification rate, negative predictive power, positive predictive power, omission error fraction, commission error fraction, false negative rate, and false positive rate from the confusion metrics (Fielding and Bell, 1997).
+
+### 7.1 Partial ROC
+
+To do Partial ROC analysis in `Nichetoolbox` upload your continuous niche model aoutput map (e.g., Maxent) and your validation dataset. 
+
+![](images_tutorial/56_tutorial.png)
+
+
+
+Validation data must be in the following format:
+
+```{r,echo=FALSE}
+library(knitr)
+d <- read.csv("~/Dropbox/Escritorio/Platica_NTB/Data/ambysPRoc.csv")
+kable(head(d))
+```
+
+##### Partial ROC output
+
+![](images_tutorial/57_tutorial.png)
+
+### 7.2 Binary maps
+
+The 'Binary maps' section has functions to transform continuos models into binary maps (i.e., presence and absence). ![](images_tutorial/58_tutorial.png)
+The conversion can be done by using one of following methods: 
+1) Confusion matrix optimization: By using true presences and absences the algortihm search for the cut-off threshold that optimizes the value of Kappa and/or TSS statistic.
+
+2) Minimum training presence: Uses the lowest suitability value where a presence occurres as cut-off threshold.
+
+3) User defined threshold: The user specifies the cut-off threshold. 
+
+#### 7.2.1 Confusion matrix optimization
+The user uploads both the continuous map (.asc) and the presences/anbesences data file (.csv). 
+The presences/anbesences data have to be in the following format
+
+```{r,echo=FALSE}
+library(knitr)
+d <- read.csv("~/Dropbox/Escritorio/Platica_NTB/Data/ambysPRoc.csv")
+kable(head(d))
+```
+
+Once uploaded press specify the range of thresholds to look for and press `Search threshold` button
+![](images_tutorial/59_tutorial.png)
+The output looks like this
+![](images_tutorial/60_tutorial.png)
+![](images_tutorial/61_tutorial.png)
+![](images_tutorial/62_tutorial.png)
+
+#### 7.2.2 Minimum training presence
+
+Just upload your continuos model (.asc) and your training data file (.csv). 
+
+
+Validation data must be in the following format:
+
+```{r,echo=FALSE}
+library(knitr)
+d <- read.csv("~/Dropbox/Escritorio/Platica_NTB/Data/ambysPRoc.csv")
+kable(tail(d))
+```
+
+![](images_tutorial/63_tutorial.png)
+
+
+#### 7.2.3 User defined threshold
+
+Specify a cut-off threshold
+
+![](images_tutorial/64_tutorial.png)
+
+# References
+
+- Fielding AH and Bell F. (1997) A review of methods for the assessment of prediction errors in conservation presence/absence models. Environmental Conservation 24(1):38–49
+
+- Peterson AT, Vieglais DA (2001) Predicting species invasions using ecological niche modeling: New approaches from bioinformatics attack a pressing problem. Bioscience 51:363-371
+
+- Peterson AT (2003) Predicting the geography of species' invasions via ecological niche modeling. Quarterly Review of Biology 78:419-433
+
+- Peterson AT, Papes M., Soberon J. (2008) Rethinking receiver operating characteristic analysis applications in ecological niche modeling. Ecological modeling 213:63–72
+
+- Peterson AT, Soberón J., Pearson R., Anderson R., Martínez-Meyer E., Nakamura M. & Araújo M. (2011) Ecological Niches and Geographic Distributions. Princeton University Press 
+
